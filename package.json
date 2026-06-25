@@ -1,0 +1,51 @@
+{
+  "name": "@getpipher/armory-memory",
+  "version": "0.1.0",
+  "description": "Memory for pi — Claude-Code-compatible cwd-keyed memory, auto-injected into every prompt. One-command CC→Pi import. The cross-tool on-ramp from Claude Code to pi.",
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "memory",
+    "claude-code",
+    "migration",
+    "cross-session",
+    "persistent"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "author": "RECTOR (https://github.com/rz1989s)",
+  "homepage": "https://github.com/getpipher/armory-memory",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/getpipher/armory-memory.git"
+  },
+  "bugs": {
+    "url": "https://github.com/getpipher/armory-memory/issues"
+  },
+  "files": [
+    "extensions",
+    "src",
+    "assets",
+    "README.md",
+    "LICENSE",
+    "docs"
+  ],
+  "pi": {
+    "extensions": [
+      "./extensions"
+    ]
+  },
+  "scripts": {
+    "test": "node test/memory-store.test.mts"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-ai": "*",
+    "@earendil-works/pi-coding-agent": "*",
+    "typebox": "*"
+  },
+  "peerDependenciesMeta": {
+    "@earendil-works/pi-ai": { "optional": true },
+    "@earendil-works/pi-coding-agent": { "optional": true },
+    "typebox": { "optional": true }
+  }
+}
