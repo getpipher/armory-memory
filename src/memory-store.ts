@@ -34,10 +34,12 @@ function ccRoot(): string {
 
 export class MemoryError extends Error {}
 
-/** Encode a filesystem path the Claude-Code way: leading dash + '/' -> '-'. */
+/** Encode a filesystem path the Claude-Code way: '/' -> '-', no extra prepend.
+ *  e.g. /Users/rector/local-dev/core -> -Users-rector-local-dev-core (single leading dash).
+ *  (CC's encoding is simply path.replace(/\//g, '-') — the leading '/' is one dash.) */
 export function toSlug(cwd: string): string {
   const clean = cwd.replace(/\/+$/, ""); // strip trailing slash
-  return "-" + clean.replace(/\//g, "-");
+  return clean.replace(/\//g, "-");
 }
 
 /** Best-effort decode of a CC slug back to a path (for display). */

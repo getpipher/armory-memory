@@ -37,9 +37,9 @@ const {
 } = await import("../src/memory-store.ts");
 
 // --- toSlug / fromSlug (CC-compatible encoding) ---
-eq("slug encodes cwd CC-style", toSlug("/Users/x/local-dev/core"), "--Users-x-local-dev-core");
+eq("slug encodes cwd CC-style (single leading dash)", toSlug("/Users/x/local-dev/core"), "-Users-x-local-dev-core");
 ok("fromSlug decodes to a path (lossy, display-only)", fromSlug("--Users-x-local-dev-core") === "/Users/x/local/dev/core");
-eq("trailing slash stripped in slug", toSlug("/a/b/"), "--a-b");
+eq("trailing slash stripped in slug", toSlug("/a/b/"), "-a-b");
 
 // --- listMemory on empty ---
 ok("listMemory empty when dir missing", listMemory("/nope/here").length === 0);
