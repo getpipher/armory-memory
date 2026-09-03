@@ -94,10 +94,6 @@ Store tests: `npm test` (25/25).
 - Imported/memory files are `0600`. Memory is **local only** — never committed, never synced.
 - **Never put secrets in memory.** Memory text is injected into the system prompt and therefore reaches your model provider — same rule as any context file.
 
-## License
-
-MIT.
-
 ## MCP call traces (armory-gateway integration)
 
 When [`@getpipher/armory-gateway`](https://github.com/getpipher/armory-gateway) is installed in the
@@ -111,3 +107,7 @@ metadata-only JSONL line to `~/.pi/agent/memory/<cwd-slug>/mcp-traces.jsonl`:
   system prompt; open it with the `read` tool when you want it.
 - The file keeps the newest 500 lines (compacted automatically).
 - Without armory-gateway installed, memory behaves exactly as before (no traces, no errors).
+
+## License
+
+MIT.
