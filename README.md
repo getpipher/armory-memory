@@ -97,3 +97,17 @@ Store tests: `npm test` (25/25).
 ## License
 
 MIT.
+
+## MCP call traces (armory-gateway integration)
+
+When [`@getpipher/armory-gateway`](https://github.com/getpipher/armory-gateway) is installed in the
+same pi, armory-memory registers a trace sink: every executed MCP tool call appends one
+metadata-only JSONL line to `~/.pi/agent/memory/<cwd-slug>/mcp-traces.jsonl`:
+
+    {"ts":…,"server":"github","tool":"create_issue","ok":true,"durationMs":42,"resultSummary":"ok blocks=1 bytes=120"}
+
+- **Args are never persisted** — the file is metadata only (server, tool, ok, duration, content-free
+  result summary, timestamp). It sits outside the `*.md` injection surface and never reaches a
+  system prompt; open it with the `read` tool when you want it.
+- The file keeps the newest 500 lines (compacted automatically).
+- Without armory-gateway installed, memory behaves exactly as before (no traces, no errors).
