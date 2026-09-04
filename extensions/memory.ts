@@ -152,4 +152,16 @@ export default function (pi: ExtensionAPI) {
       }
     },
   });
+
+  // SPEC-1b-3: register the gateway trace sink (silent skip when
+  // @getpipher/armory-gateway is absent — standalone memory unchanged).
+  pi.on("session_start", async (_event, ctx) => {
+    try {
+      const cwd = (ctx as { cwd?: string } | undefined)?.cwd ?? process.cwd();
+      const { registerGatewayTraceSink } = await import("../src/gateway-adapter.ts");
+      await registerGatewayTraceSink({ cwd });
+    } catch {
+      // gateway absent — standalone degradation
+    }
+  });
 }

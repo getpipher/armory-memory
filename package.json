@@ -42,7 +42,7 @@
     ]
   },
   "scripts": {
-    "test": "node test/memory-store.test.mts && node --test test/exports.test.mts"
+    "test": "node test/memory-store.test.mts && node test/trace-sink.test.mts && node test/gateway-adapter.test.mts && node --test test/exports.test.mts"
   },
   "peerDependencies": {
     "@earendil-works/pi-ai": "*",
