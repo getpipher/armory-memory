@@ -1,7 +1,7 @@
 {
   "name": "@getpipher/armory-memory",
-  "version": "0.1.1",
-  "description": "Memory for pi \u2014 Claude-Code-compatible cwd-keyed memory, auto-injected into every prompt. One-command CC\u2192Pi import. The cross-tool on-ramp from Claude Code to pi.",
+  "version": "0.1.2",
+  "description": "Memory for pi — Claude-Code-compatible cwd-keyed memory, auto-injected into every prompt. One-command CC→Pi import. The cross-tool on-ramp from Claude Code to pi.",
   "keywords": [
     "pi-package",
     "pi-extension",
