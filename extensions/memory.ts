@@ -9,8 +9,8 @@
  *
  * Plus a one-command import so CC→Pi migrants bring their memory with them.
  *
- * Surface: auto-injection (passive), `memory` tool (list/read), `/memory` slash
- * command (import + list + path). See docs/memory-SPEC.md for the design.
+ * Surface: auto-injection (passive), `memory` tool (list/read), `/mem` slash
+ * command (import + list + path; named /mem to avoid omp's native /memory). See docs/memory-SPEC.md for the design.
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
@@ -32,15 +32,38 @@ function fmtImport(r: ImportResult): string {
 }
 
 export default function (pi: ExtensionAPI) {
-  // ── Auto-inject the cwd's memory into the system prompt every turn (the CC model).
+  // ── Auto-inject the cwd's memory (the CC model), per host contract.
+  //
+  // pi: the before_agent_start event carries cwd + the live systemPrompt, and
+  // a returned {systemPrompt} is honored → append the block every turn (the
+  // prompt is rebuilt per request, so this never bloats the transcript).
+  //
+  // omp: the legacy event carries no cwd/prompt, and a {systemPrompt} return
+  // REPLACES the host prompt entirely (verified — persona loss). omp's own
+  // contract is {message}: a hidden persisted context message. Inject once per
+  // session (persisted — per-turn repeats would duplicate in the transcript)
+  // and stay quiet on projects without memory.
+  let injectedThisSession = false;
   pi.on("before_agent_start", async (event: any) => {
     try {
       const cwd: string | undefined =
         event?.systemPromptOptions?.cwd ?? event?.cwd;
-      if (!cwd) return undefined;
-      const block = renderMemoryBlock(cwd);
-      const base = (event?.systemPrompt as string | undefined) ?? "";
-      return { systemPrompt: base + "\n\n" + block };
+      if (cwd) {
+        const block = renderMemoryBlock(cwd);
+        const base = (event?.systemPrompt as string | undefined) ?? "";
+        return { systemPrompt: base + "\n\n" + block };
+      }
+      if (injectedThisSession) return undefined;
+      injectedThisSession = true;
+      if (listMemory(process.cwd()).length === 0) return undefined;
+      return {
+        message: {
+          customType: "armory-memory",
+          content: renderMemoryBlock(process.cwd()),
+          display: false,
+          attribution: "agent",
+        },
+      };
     } catch {
       return undefined; // never crash the session
     }
@@ -53,7 +76,7 @@ export default function (pi: ExtensionAPI) {
     description:
       "Project memory for the current working directory (Claude-Code-compatible, cwd-keyed, " +
       "auto-injected each turn). Use to list/read the cwd's memory files. " +
-      "Import from Claude Code via /memory import. Never put secrets in memory — " +
+      "Import from Claude Code via /mem import. Never put secrets in memory — " +
       "the text reaches the model provider.",
     promptSnippet: "Read the current project's cross-session memory",
     promptGuidelines: [
@@ -72,7 +95,7 @@ export default function (pi: ExtensionAPI) {
             content: [
               {
                 type: "text" as const,
-                text: `No memory for ${cwd} yet. Add *.md to ${memoryDirFor(cwd)}/ or run /memory import.`,
+                text: `No memory for ${cwd} yet. Add *.md to ${memoryDirFor(cwd)}/ or run /mem import.`,
               },
             ],
           };
@@ -91,10 +114,10 @@ export default function (pi: ExtensionAPI) {
     },
   });
 
-  // ── Human slash command: /memory [import [--force] [slug]|all|list|path]
-  pi.registerCommand("memory", {
+  // ── Human slash command: /mem [import [--force] [slug]|all|list|path]
+  pi.registerCommand("mem", {
     description:
-      "Project memory. /memory · /memory list · /memory import [--force] [slug|all] · /memory path",
+      "Project memory. /mem · /mem list · /mem import [--force] [slug|all] · /mem path",
     handler: async (args, ctx) => {
       const a = (args ?? "").trim();
       const [sub, ...rest] = a.split(/\s+/);
@@ -145,7 +168,7 @@ export default function (pi: ExtensionAPI) {
         const files = listMemory(cwd);
         const msg = files.length
           ? files.map((f) => `  ${f.name} (${f.size}B)`).join("\n")
-          : `(no memory for ${cwd} — run /memory import to bring in Claude Code memory)`;
+          : `(no memory for ${cwd} — run /mem import to bring in Claude Code memory)`;
         if (ctx.hasUI) ctx.ui.notify(msg, "info");
       } catch (err) {
         if (ctx.hasUI) ctx.ui.notify(`memory error: ${(err as Error).message}`, "warning");
