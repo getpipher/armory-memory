@@ -44,19 +44,19 @@ Then restart pi (or `/reload`). Or add to `~/.pi/agent/settings.json`:
 ## Bring your Claude Code memory (one command)
 
 ```bash
-/memory import          # import EVERY CC project's memory (1:1, idempotent)
-/memory import --force  # overwrite existing pi copies
-/memory import --Users-rz-local-dev-core   # import a single project by CC slug
+/mem import          # import EVERY CC project's memory (1:1, idempotent)
+/mem import --force  # overwrite existing pi copies
+/mem import --Users-rz-local-dev-core   # import a single project by CC slug
 ```
 
-That's the on-ramp: install → `/memory import` → pi instantly remembers everything CC did. CC originals are **copied** (not moved), so you can run both hosts side-by-side during migration.
+That's the on-ramp: install → `/mem import` → pi instantly remembers everything CC did. CC originals are **copied** (not moved), so you can run both hosts side-by-side during migration.
 
 ## How it works
 
 - **Auto-injection** — on every `before_agent_start`, the current cwd's memory is injected into the system prompt as a `## Memory` block (mirrors CC's passive model). Budget-aware: a compact index of all files + the N newest inlined (capped), so your prompt never bloats even with hundreds of KB of memory.
 - **cwd-keyed storage** — `~/.pi/agent/memory/<cwd-slug>/*.md`, exactly CC's scheme. Imports 1:1, muscle memory transfers.
 - **`memory` tool** — model-callable; list the current cwd's memory.
-- **`/memory` command** — human triage: `list` · `import [--force] [slug|all]` · `path`.
+- **`/mem` command** — human triage: `list` · `import [--force] [slug|all]` · `path`.
 
 Full design + decisions: [`docs/memory-SPEC.md`](docs/memory-SPEC.md).
 
