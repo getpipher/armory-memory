@@ -1,7 +1,7 @@
 name: Release
 
 # Publishes @getpipher/armory-memory to npm on tag push (v*).
-# Uses the getpither org secret NPM_TOKEN (granular npm token, Read-and-write,
+# Uses the getpipher org secret NPM_TOKEN (granular npm token, Read-and-write,
 # scoped to @getpipher, with "Bypass 2FA" — no OTP needed). Inherited by all
 # getpipher repos.  gh secret set NPM_TOKEN --org getpipher
 #
